@@ -14,7 +14,6 @@
     --ink:#1B1712;
     --cream:#FFF7EE;
     --cream-2:#FCEEDD;
-    --line: rgba(27,23,18,0.12
     --white:#fff;
   }
   :root:not([data-theme="light"]){
