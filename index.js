@@ -1,528 +1,354 @@
-import { useState } from "react";
-import { Button } from "/components/ui/button";
-import { Input } from "/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "/components/ui/card";
-import { Label } from "/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shoplyfire — Fresh Finds, Best Prices</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --flame:#FF4B26;
+    --flame-dark:#D93A18;
+    --ink:#1B1712;
+    --cream:#FFF7EE;
+    --cream-2:#FCEEDD;
+    --line: rgba(27,23,18,0.12);
+    --white:#fff;
+  }
+  :root:not([data-theme="light"]){
+    --ink:#1B1712; --cream:#FFF7EE;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F3EEE6; --cream:#151210; --cream-2:#1E1A16; --line: rgba(243,238,230,0.14); --white:#221D18;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F3EEE6; --cream:#151210; --cream-2:#1E1A16; --line: rgba(243,238,230,0.14); --white:#221D18;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth; scroll-padding-top: calc(72px + env(safe-area-inset-top,0px));}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    overflow-x:hidden;
+  }
+  img{max-width:100%; display:block;}
+  h1,h2,h3{font-family:'Archivo Black',sans-serif; line-height:1.05; letter-spacing:-0.01em;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1160px; margin:0 auto; padding:0 24px;}
 
-const MobileShop = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [cartItems, setCartItems] = useState([]);
-  const [activePage, setActivePage] = useState("home");
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:var(--cream);
+    border-bottom:1px solid var(--line);
+    padding-top:env(safe-area-inset-top,0px);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    height:72px; max-width:1160px; margin:0 auto; padding:0 24px;
+  }
+  .logo{font-family:'Archivo Black',sans-serif; font-size:1.4rem;}
+  .logo span{color:var(--flame);}
+  .nav-links{display:flex; gap:32px; font-weight:600; font-size:0.95rem;}
+  .nav-links a{position:relative; padding:4px 0;}
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:-2px; width:0; height:2px;
+    background:var(--flame); transition:width .25s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+  .nav-cta{
+    background:var(--flame); color:#fff; padding:10px 20px; border-radius:100px;
+    font-weight:700; font-size:0.9rem; white-space:nowrap; transition:transform .2s ease, background .2s ease;
+  }
+  .nav-cta:hover{background:var(--flame-dark); transform:translateY(-1px);}
+  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer;}
+  .burger span{width:24px; height:2px; background:var(--ink);}
 
-  const categories = [
-    { id: "all", name: "All Products" },
-    { id: "android", name: "Android" },
-    { id: "iphone", name: "iPhone" },
-    { id: "accessories", name: "Accessories" },
-  ];
+  /* HERO */
+  .hero{
+    position:relative; min-height:92vh; display:flex; align-items:flex-end;
+    background: linear-gradient(180deg, rgba(20,14,10,0.15) 0%, rgba(15,10,7,0.78) 78%),
+      url('https://i.ibb.co/wZzjYQW1/happy-beautiful-couple-posing-with-shopping-bags-violet-1.jpg') center/cover no-repeat;
+  }
+  .hero-inner{
+    max-width:1160px; margin:0 auto; padding:0 24px 72px; width:100%; color:#fff;
+  }
+  .hero-eyebrow{
+    display:inline-block; background:var(--flame); color:#fff; font-weight:700;
+    font-size:0.8rem; padding:7px 16px; border-radius:100px; margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 7vw, 5.2rem); color:#fff; max-width:14ch;
+    animation: rise .9s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .hero p{
+    font-size:1.15rem; margin-top:20px; max-width:36ch; color:rgba(255,255,255,0.88);
+    animation: rise .9s cubic-bezier(.2,.8,.2,1) .12s both;
+  }
+  .hero-actions{
+    margin-top:34px; display:flex; gap:16px; flex-wrap:wrap;
+    animation: rise .9s cubic-bezier(.2,.8,.2,1) .22s both;
+  }
+  @keyframes rise{ from{opacity:0; transform:translateY(22px);} to{opacity:1; transform:translateY(0);} }
+  .btn-primary{
+    background:var(--flame); color:#fff; padding:16px 34px; border-radius:100px;
+    font-weight:700; font-size:1rem; border:none; cursor:pointer;
+    transition:transform .2s ease, background .2s ease, box-shadow .2s ease;
+    box-shadow:0 10px 30px -10px rgba(255,75,38,0.7);
+  }
+  .btn-primary:hover{background:var(--flame-dark); transform:translateY(-2px);}
+  .btn-ghost{
+    padding:16px 30px; border-radius:100px; font-weight:700; font-size:1rem;
+    border:1.5px solid rgba(255,255,255,0.55); color:#fff; background:transparent;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,0.12); border-color:#fff;}
 
-  const products = [
-    {
-      id: 1,
-      name: "Samsung Galaxy S24 Ultra",
-      price: "$1199",
-      category: "android",
-      description: "Flagship Android smartphone with advanced camera system",
-    },
-    {
-      id: 2,
-      name: "iPhone 15 Pro Max",
-      price: "$1199",
-      category: "iphone",
-      description: "Premium iPhone with titanium design and powerful camera",
-    },
-    {
-      id: 3,
-      name: "Google Pixel 8 Pro",
-      price: "$999",
-      category: "android",
-      description: "AI-powered smartphone with exceptional camera quality",
-    },
-    {
-      id: 4,
-      name: "Wireless Earbuds Pro",
-      price: "$199",
-      category: "accessories",
-      description: "Noise-cancelling wireless earbuds with premium sound",
-    },
-    {
-      id: 5,
-      name: "iPhone 14",
-      price: "$799",
-      category: "iphone",
-      description: "Powerful iPhone with advanced features at great value",
-    },
-    {
-      id: 6,
-      name: "Fast Charger 45W",
-      price: "$49",
-      category: "accessories",
-      description: "Rapid charging solution for all mobile devices",
-    },
-  ];
+  /* SECTION HEADINGS */
+  .section{padding:96px 0;}
+  .section-head{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:44px; flex-wrap:wrap;}
+  .section-head h2{font-size:clamp(1.9rem, 4vw, 2.7rem);}
+  .section-head p{max-width:42ch; color:var(--ink); opacity:0.65; font-size:1rem;}
 
-  const featuredDeals = [
-    {
-      id: 101,
-      name: "Weekend Special: Galaxy Z Flip",
-      price: "$899",
-      originalPrice: "$1099",
-      description: "Limited time offer on foldable smartphone",
-    },
-    {
-      id: 102,
-      name: "Clearance: iPhone 13",
-      price: "$599",
-      originalPrice: "$799",
-      description: "Last year's model at incredible price",
-    },
-  ];
+  /* PRODUCTS - horizontal scroll carousel */
+  .carousel-track{
+    display:flex; gap:22px; overflow-x:auto; scroll-snap-type:x mandatory;
+    padding-bottom:14px; -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin; scrollbar-color:var(--flame) transparent;
+  }
+  .carousel-track::-webkit-scrollbar{height:6px;}
+  .carousel-track::-webkit-scrollbar-thumb{background:var(--flame); border-radius:10px;}
+  .card{
+    flex:0 0 auto; width:300px; scroll-snap-align:start;
+    background:var(--white); border:1px solid var(--line); border-radius:20px;
+    overflow:hidden; transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .card:hover{transform:translateY(-6px); box-shadow:0 18px 40px -18px rgba(0,0,0,0.28);}
+  .card-img{height:230px; overflow:hidden; background:var(--cream-2);}
+  .card-img img{width:100%; height:100%; object-fit:cover; transition:transform .4s ease;}
+  .card:hover .card-img img{transform:scale(1.06);}
+  .card-body{padding:20px;}
+  .card-tag{font-size:0.75rem; font-weight:700; color:var(--flame); margin-bottom:6px;}
+  .card-body h3{font-family:'Inter',sans-serif; font-weight:700; font-size:1.08rem; margin-bottom:10px;}
+  .price-row{display:flex; align-items:center; justify-content:space-between;}
+  .price{font-family:'Archivo Black',sans-serif; font-size:1.3rem;}
+  .price small{font-family:'Inter',sans-serif; font-weight:500; font-size:0.85rem; opacity:0.45; text-decoration:line-through; margin-left:8px;}
+  .buy-btn{
+    background:var(--ink); color:var(--cream); border:none; padding:10px 18px; border-radius:100px;
+    font-weight:700; font-size:0.85rem; cursor:pointer; transition:background .2s ease, transform .2s ease;
+  }
+  .buy-btn:hover{background:var(--flame); transform:scale(1.05);}
+  .carousel-hint{text-align:center; margin-top:18px; font-size:0.85rem; opacity:0.5;}
 
-  const reviews = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      rating: 5,
-      comment: "Excellent service and fast delivery! My new phone arrived perfectly packaged.",
-      date: "2 days ago",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      rating: 4,
-      comment: "Great prices and good selection. Will shop here again.",
-      date: "1 week ago",
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      rating: 5,
-      comment: "The customer support helped me choose the perfect phone for my needs.",
-      date: "3 days ago",
-    },
-  ];
+  /* ABOUT STRIP */
+  .strip{background:var(--ink); color:var(--cream);}
+  .strip .wrap{padding:64px 24px; display:grid; grid-template-columns:repeat(3,1fr); gap:32px; text-align:center;}
+  .strip h3{font-family:'Archivo Black',sans-serif; font-size:1.6rem; color:var(--flame);}
+  .strip p{opacity:0.75; margin-top:6px; font-size:0.95rem;}
 
-  const filteredProducts = products.filter(product => {
-    const matchesCategory = activeCategory === "all" || product.category === activeCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  /* FOOTER */
+  footer{background:var(--cream-2); border-top:1px solid var(--line); padding:60px 0 30px;}
+  .footer-grid{display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap;}
+  .footer-brand{max-width:320px;}
+  .footer-brand .logo{margin-bottom:12px;}
+  .footer-brand p{opacity:0.65; font-size:0.95rem; line-height:1.6;}
+  .footer-col h4{font-size:0.85rem; text-transform:uppercase; letter-spacing:0.04em; opacity:0.5; margin-bottom:14px;}
+  .footer-col a, .footer-col p{display:block; margin-bottom:10px; font-size:0.95rem; opacity:0.85;}
+  .footer-col a:hover{color:var(--flame);}
+  .footer-bottom{
+    margin-top:48px; padding-top:24px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-size:0.85rem; opacity:0.55;
+  }
 
-  const addToCart = (product) => {
-    setCartItems([...cartItems, product]);
-  };
+  /* WHATSAPP FLOAT */
+  .wa-float{
+    position:fixed; right:22px; bottom:calc(22px + env(safe-area-inset-bottom,0px)); z-index:200;
+    width:58px; height:58px; border-radius:50%; background:#25D366;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 26px -6px rgba(37,211,102,0.6);
+    transition:transform .2s ease;
+  }
+  .wa-float:hover{transform:scale(1.08);}
 
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < rating ? "text-yellow-400" : "text-gray-600"}>
-        ★
-      </span>
-    ));
-  };
+  /* TOAST */
+  .toast{
+    position:fixed; left:50%; bottom:calc(30px + env(safe-area-inset-bottom,0px)); transform:translate(-50%, 20px);
+    background:var(--ink); color:var(--cream); padding:14px 24px; border-radius:100px;
+    font-weight:600; font-size:0.9rem; opacity:0; pointer-events:none; transition:all .3s ease; z-index:300;
+    white-space:nowrap;
+  }
+  .toast.show{opacity:1; transform:translate(-50%, 0);}
 
-  return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-sm border-b border-gray-800">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                <span className="font-bold text-white">M</span>
-              </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
-                MobileHub
-              </h1>
-            </div>
-            
-            <nav className="hidden md:flex space-x-6">
-              {["home", "shop", "about", "contact", "cart"].map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setActivePage(page)}
-                  className={`capitalize hover:text-blue-400 transition-colors ${
-                    activePage === page ? "text-blue-400" : "text-gray-300"
-                  }`}
-                >
-                  {page === "cart" ? `Cart (${cartItems.length})` : page}
-                </button>
-              ))}
-            </nav>
+  @media (max-width: 780px){
+    .nav-links{
+      position:fixed; top:72px; left:0; right:0; background:var(--cream);
+      flex-direction:column; padding:20px 24px; gap:18px; border-bottom:1px solid var(--line);
+      transform:translateY(-120%); transition:transform .3s ease; z-index:99;
+    }
+    .nav-links.open{transform:translateY(0);}
+    .nav-cta{display:none;}
+    .burger{display:flex;}
+    .strip .wrap{grid-template-columns:1fr; gap:26px;}
+    .hero{min-height:82vh;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
 
-            <div className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        {activePage === "home" && (
-          <section className="mb-16">
-            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-900 to-black p-8 md:p-12">
-              <div className="relative z-10 max-w-2xl">
-                <h2 className="text-4xl md:text-6xl font-bold mb-4">
-                  Latest <span className="text-blue-400">Smartphones</span>
-                </h2>
-                <p className="text-gray-300 text-lg mb-8">
-                  Discover the newest technology with cutting-edge features and premium performance
-                </p>
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg">
-                  Shop Now
-                </Button>
-              </div>
-              <div className="absolute right-0 top-0 bottom-0 w-1/2 hidden md:block">
-                <img 
-                  src="https://placeholder-image-service.onrender.com/image/600x400?prompt=Modern%20sleek%20smartphones%20floating%20in%20dark%20background%20with%20blue%20glow%20effects&id=hero-smartphones" 
-                  alt="Latest smartphones floating in dark background with blue glow effects" 
-                  className="w-full h-full object-cover opacity-80"
-                />
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Search and Filters */}
-        {(activePage === "home" || activePage === "shop") && (
-          <section className="mb-12">
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-              <div className="w-full md:w-1/3">
-                <Input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-gray-900 border-gray-700 text-white placeholder-gray-500"
-                />
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category.id}
-                    variant={activeCategory === category.id ? "default" : "outline"}
-                    onClick={() => setActiveCategory(category.id)}
-                    className={`border ${
-                      activeCategory === category.id 
-                        ? "bg-blue-500 border-blue-500" 
-                        : "border-gray-700 text-gray-300 hover:border-blue-400"
-                    }`}
-                  >
-                    {category.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Products Grid */}
-        {(activePage === "home" || activePage === "shop") && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-8">
-              {activeCategory === "all" ? "All Products" : `${categories.find(c => c.id === activeCategory)?.name}`}
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <Card key={product.id} className="bg-gray-900 border-gray-800 overflow-hidden hover:shadow-lg hover:shadow-blue-500/20 transition-all">
-                  <div className="h-48 overflow-hidden">
-                    <img 
-                      src={`https://placeholder-image-service.onrender.com/image/400x300?prompt=${encodeURIComponent(product.name)}%20smartphone%20product%20shot%20on%20dark%20background&id=product-${product.id}`} 
-                      alt={`${product.name} smartphone product shot on dark background`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-white">{product.name}</CardTitle>
-                    <CardDescription className="text-gray-400">{product.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold text-blue-400">{product.price}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button 
-                      onClick={() => addToCart(product)}
-                      className="w-full bg-blue-500 hover:bg-blue-600"
-                    >
-                      Add to Cart
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Featured Deals */}
-        {activePage === "home" && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-8">Featured Deals</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featuredDeals.map((deal) => (
-                <Card key={deal.id} className="bg-gradient-to-br from-gray-900 to-black border-2 border-green-400/20 relative overflow-hidden">
-                  <div className="absolute top-4 right-4 bg-green-500 text-black px-3 py-1 rounded-full text-sm font-bold">
-                    SALE
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-white">{deal.name}</CardTitle>
-                    <CardDescription className="text-gray-400">{deal.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-4">
-                      <p className="text-2xl font-bold text-green-400">{deal.price}</p>
-                      <p className="text-lg text-gray-500 line-through">{deal.originalPrice}</p>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button className="w-full bg-green-500 hover:bg-green-600 text-black">
-                      Get Deal
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Customer Reviews */}
-        {activePage === "home" && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-8">Customer Reviews</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {reviews.map((review) => (
-                <Card key={review.id} className="bg-gray-900 border-gray-800">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-white">{review.name}</CardTitle>
-                      <div className="flex">
-                        {renderStars(review.rating)}
-                      </div>
-                    </div>
-                    <CardDescription className="text-gray-400">{review.date}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-300">"{review.comment}"</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* About Us Page */}
-        {activePage === "about" && (
-          <section className="mb-16">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-4xl font-bold mb-8 text-center">About MobileHub</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div>
-                  <img 
-                    src="https://placeholder-image-service.onrender.com/image/500x400?prompt=Modern%20mobile%20phone%20store%20interior%20with%20sleek%20display%20counters%20and%20dark%20theme&id=about-store" 
-                    alt="Modern mobile phone store interior with sleek display counters and dark theme"
-                    className="rounded-2xl"
-                  />
-                </div>
-                <div>
-                  <p className="text-gray-300 text-lg mb-4">
-                    MobileHub is your premier destination for the latest smartphones and accessories. 
-                    Founded in 2020, we've been providing customers with top-quality devices and 
-                    exceptional service.
-                  </p>
-                  <p className="text-gray-300 text-lg mb-4">
-                    Our mission is to make cutting-edge technology accessible to everyone while 
-                    maintaining the highest standards of customer satisfaction.
-                  </p>
-                  <p className="text-gray-300 text-lg">
-                    We offer a curated selection of Android and iOS devices, along with premium 
-                    accessories to enhance your mobile experience.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Contact Page */}
-        {activePage === "contact" && (
-          <section className="mb-16">
-            <div className="max-w-2xl mx-auto">
-              <h2 className="text-4xl font-bold mb-8 text-center">Contact Us</h2>
-              <Card className="bg-gray-900 border-gray-800">
-                <CardHeader>
-                  <CardTitle className="text-white">Get in Touch</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Have questions? We'd love to hear from you.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-white">Name</Label>
-                      <Input 
-                        id="name" 
-                        placeholder="Your name" 
-                        className="bg-gray-800 border-gray-700 text-white"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-white">Email</Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        placeholder="Your email" 
-                        className="bg-gray-800 border-gray-700 text-white"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="message" className="text-white">Message</Label>
-                      <Textarea 
-                        id="message" 
-                        placeholder="Your message" 
-                        rows={5}
-                        className="bg-gray-800 border-gray-700 text-white"
-                      />
-                    </div>
-                    <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600">
-                      Send Message
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-        )}
-
-        {/* Cart Page */}
-        {activePage === "cart" && (
-          <section className="mb-16">
-            <h2 className="text-4xl font-bold mb-8">Your Cart</h2>
-            {cartItems.length === 0 ? (
-              <Card className="bg-gray-900 border-gray-800 text-center py-12">
-                <CardContent>
-                  <p className="text-gray-400 text-lg">Your cart is empty</p>
-                  <Button 
-                    onClick={() => setActivePage("shop")}
-                    className="mt-4 bg-blue-500 hover:bg-blue-600"
-                  >
-                    Start Shopping
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {cartItems.map((item, index) => (
-                  <Card key={index} className="bg-gray-900 border-gray-800">
-                    <CardContent className="p-4 flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <img 
-                          src={`https://placeholder-image-service.onrender.com/image/100x100?prompt=${encodeURIComponent(item.name)}%20product%20thumbnail&id=cart-${item.id}`} 
-                          alt={`${item.name} product thumbnail`}
-                          className="w-16 h-16 object-cover rounded"
-                        />
-                        <div>
-                          <h3 className="font-semibold text-white">{item.name}</h3>
-                          <p className="text-blue-400">{item.price}</p>
-                        </div>
-                      </div>
-                      <Button variant="destructive" size="sm">
-                        Remove
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-                <Card className="bg-gray-900 border-gray-800 mt-8">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-gray-400">Subtotal</span>
-                      <span className="text-white font-semibold">
-                        ${cartItems.reduce((total, item) => total + parseInt(item.price.replace('$', '')), 0)}
-                      </span>
-                    </div>
-                    <Button className="w-full bg-green-500 hover:bg-green-600 text-black">
-                      Proceed to Checkout
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-          </section>
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 border-t border-gray-800 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-white font-bold text-lg mb-4">MobileHub</h3>
-              <p className="text-gray-400">
-                Your trusted partner for all mobile technology needs.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                {["home", "shop", "about", "contact"].map((page) => (
-                  <li key={page}>
-                    <button 
-                      onClick={() => setActivePage(page)}
-                      className="text-gray-400 hover:text-blue-400 transition-colors capitalize"
-                    >
-                      {page}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Categories</h4>
-              <ul className="space-y-2">
-                {categories.map((category) => (
-                  <li key={category.id}>
-                    <button 
-                      onClick={() => {
-                        setActiveCategory(category.id);
-                        setActivePage("shop");
-                      }}
-                      className="text-gray-400 hover:text-blue-400 transition-colors"
-                    >
-                      {category.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Contact Info</h4>
-              <p className="text-gray-400">123 Tech Street</p>
-              <p className="text-gray-400">San Francisco, CA 94103</p>
-              <p className="text-gray-400">info@mobilehub.com</p>
-              <p className="text-gray-400">+1 (555) 123-4567</p>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-gray-400">© 2024 MobileHub. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+<header>
+  <nav>
+    <div class="logo">Shop<span>lyfire</span></div>
+    <div class="nav-links" id="navLinks">
+      <a href="#home" onclick="closeMenu()">Home</a>
+      <a href="#products" onclick="closeMenu()">Products</a>
+      <a href="#about" onclick="closeMenu()">About</a>
+      <a href="#footer" onclick="closeMenu()">Contact</a>
     </div>
-  );
-};
+    <a href="#products" class="nav-cta">Shop Now</a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
 
-export default MobileShop;
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">Fresh Finds, Best Prices</span>
+    <h1>Shop Smart, Shoplyfire</h1>
+    <p>Handpicked essentials, honest prices, and deals that actually feel good. New drops every week.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+      <a href="#about" class="btn-ghost">Why Shoplyfire</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="products">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Trending right now</h2>
+        <p>A tight edit of what people are actually buying this week.</p>
+      </div>
+    </div>
+
+    <div class="carousel-track" id="carouselTrack">
+      <div class="card">
+        <div class="card-img"><img src="https://i.ibb.co/SwKmvYPS/Screenshot-20260909-101052.jpg" alt="Product one"></div>
+        <div class="card-body">
+          <div class="card-tag">Bestseller</div>
+          <h3>Everyday Comfort Pick</h3>
+          <div class="price-row">
+            <span class="price">₹999 <small>₹1,499</small></span>
+            <button class="buy-btn" onclick="buyNow('Everyday Comfort Pick', '₹999')">Buy Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-img"><img src="https://i.ibb.co/yFr0P33/image.jpg" alt="Product two"></div>
+        <div class="card-body">
+          <div class="card-tag">New Arrival</div>
+          <h3>Daily Essentials Set</h3>
+          <div class="price-row">
+            <span class="price">₹1,299 <small>₹1,899</small></span>
+            <button class="buy-btn" onclick="buyNow('Daily Essentials Set', '₹1,299')">Buy Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-img"><img src="https://i.ibb.co/chKzbf73/image.jpg" alt="Product three"></div>
+        <div class="card-body">
+          <div class="card-tag">Limited Stock</div>
+          <h3>Weekend Special Combo</h3>
+          <div class="price-row">
+            <span class="price">₹1,799 <small>₹2,499</small></span>
+            <button class="buy-btn" onclick="buyNow('Weekend Special Combo', '₹1,799')">Buy Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="carousel-hint">Swipe or scroll to see more →</p>
+  </div>
+</section>
+
+<section class="strip" id="about">
+  <div class="wrap">
+    <div>
+      <h3>Free Shipping</h3>
+      <p>On every order, no minimum spend.</p>
+    </div>
+    <div>
+      <h3>Easy Returns</h3>
+      <p>7-day hassle-free return window.</p>
+    </div>
+    <div>
+      <h3>Real Support</h3>
+      <p>Message us on WhatsApp, anytime.</p>
+    </div>
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">Shop<span>lyfire</span></div>
+        <p>Fresh Finds, Best Prices. A small shop that cares about getting you good stuff without the markup.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="#home">Home</a>
+        <a href="#products">Products</a>
+        <a href="#about">About</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:sksarjatali0@gmail.com">sksarjatali0@gmail.com</a>
+        <a href="https://wa.me/9641755038" target="_blank" rel="noopener">WhatsApp us</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Shoplyfire. All rights reserved.</span>
+      <span>Made with care, shipped with speed.</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/9641755038" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.02 3C9.4 3 4 8.38 4 15c0 2.34.68 4.52 1.86 6.36L4 29l7.86-1.8A11.9 11.9 0 0 0 16.02 27C22.64 27 28 21.62 28 15S22.64 3 16.02 3Z" fill="#fff"/>
+    <path d="M16.02 5C10.5 5 6 9.48 6 15c0 1.98.58 3.82 1.58 5.38L6.7 24.5l4.28-.98A9.94 9.94 0 0 0 16.02 25C21.54 25 26 20.52 26 15S21.54 5 16.02 5Z" fill="#25D366"/>
+    <path d="M12.4 10.4c-.24-.54-.5-.55-.73-.56h-.62c-.22 0-.57.08-.87.4-.3.32-1.14 1.1-1.14 2.7s1.17 3.14 1.33 3.36c.16.22 2.28 3.62 5.63 4.94 2.78 1.1 3.35.88 3.95.83.6-.06 1.94-.79 2.22-1.55.27-.76.27-1.41.19-1.55-.08-.14-.3-.22-.62-.38-.32-.16-1.94-.96-2.24-1.07-.3-.11-.52-.16-.74.16-.22.32-.85 1.07-1.04 1.29-.19.22-.38.24-.7.08-.32-.16-1.35-.5-2.57-1.6-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.14-.14.32-.38.48-.57.16-.19.21-.32.32-.54.11-.22.05-.4-.03-.57-.08-.16-.7-1.77-.98-2.4Z" fill="#fff"/>
+  </svg>
+</a>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const burger = document.getElementById('burger');
+  const navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  function closeMenu(){ navLinks.classList.remove('open'); }
+
+  function buyNow(name, price){
+    const toast = document.getElementById('toast');
+    toast.textContent = `${name} added — ${price}. We'll message you on WhatsApp to confirm!`;
+    toast.classList.add('show');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => toast.classList.remove('show'), 3200);
+  }
+</script>
+
+</body>
+</html>
