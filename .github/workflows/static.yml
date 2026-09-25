@@ -21,3 +21,14 @@ const products=[{n:'Featured Product 01',p:499,img:'https://i.ibb.co/SwKmvYPS/Sc
 </script>
 </body>
 </html>
+- name: Remap SARIF
+  # You may pin to the exact commit or the version.
+  # uses: advanced-security/remap-sarif@11ffec4dc4c6a26c1f71062e812fb9567e5a1d39
+  uses: advanced-security/remap-sarif@v1.0.2
+  with:
+    # Path to the root of the source code
+    sourceroot: # optional, default is $GITHUB_WORKSPACE
+    # Path to the input SARIF file
+    input: 
+    # Path to the output SARIF file
+    output: 
