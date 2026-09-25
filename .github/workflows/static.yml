@@ -1,43 +1,23 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
-
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shoplyfire</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f4f4f9}header{position:sticky;top:0;background:#fff;padding:15px 25px;display:flex;justify-content:space-between;box-shadow:0 2px 10px #0001}.logo{font-size:26px;font-weight:700;color:#6c3df4}nav a{margin-left:18px;color:#333;text-decoration:none;font-weight:700}.hero{height:80vh;background:linear-gradient(#0008,#0005),url('https://i.ibb.co/wZzjYQW1/happy-beautiful-couple-posing-with-shopping-bags-violet-1.jpg') center/cover;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff}.hero h1{font-size:52px}.btn{background:#6c3df4;color:#fff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:bold}section{padding:50px 20px;max-width:1100px;margin:auto}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 20px #0001}.card img{width:100%;height:220px;object-fit:cover}.info{padding:15px}.price{font-size:22px;font-weight:bold}.add{width:100%;padding:10px;background:#6c3df4;color:#fff;border:0;border-radius:8px}.cart{position:fixed;bottom:18px;right:18px;background:#6c3df4;color:#fff;padding:14px 18px;border-radius:50px;cursor:pointer}.drawer{display:none;position:fixed;inset:0;background:#0007}.panel{position:absolute;right:0;width:350px;height:100%;background:#fff;padding:20px;overflow:auto}footer{background:#111;color:#ddd;text-align:center;padding:30px;margin-top:40px}input,textarea{width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:8px}
+</style>
+</head>
+<body>
+<header><div class="logo">Shoplyfire</div><nav><a href="#products">Products</a><a href="#contact">Contact</a></nav></header>
+<div class="hero"><div><h1>Shop Smart,<br>Shoplyfire</h1><p>Fresh Finds, Best Prices</p><a class="btn" href="#products">Shop Now</a></div></div>
+<section id="products"><h2>Featured Products</h2><div class="grid" id="list"></div></section>
+<section id="contact"><h2>Contact</h2><p><b>Email:</b> sksarjatali0@gmail.com</p><p><b>WhatsApp:</b> 9641755038</p><a class="btn" href="https://razorpay.me/@sksarjatali" target="_blank">Pay Now</a></section>
+<footer><h3>Shoplyfire</h3><p>Fresh Finds, Best Prices</p><p>© 2026 Shoplyfire</p></footer>
+<div class="cart" onclick="openCart()">🛒 <span id="count">0</span></div>
+<div class="drawer" id="drawer"><div class="panel"><h2>Cart</h2><div id="items"></div><h3>Total: ₹<span id="total">0</span></h3><hr><input id="name" placeholder="Your Name"><input id="phone" placeholder="Phone"><textarea id="address" placeholder="Address"></textarea><button class="add" onclick="emailOrder()">Email Order</button><br><br><button class="add" style="background:#25D366" onclick="pay()">Pay Now</button><br><br><button class="add" style="background:#999" onclick="closeCart()">Close</button></div></div>
+<script>
+const products=[{n:'Featured Product 01',p:499,img:'https://i.ibb.co/SwKmvYPS/Screenshot-20260909-101052.jpg'},{n:'Featured Product 02',p:699,img:'https://i.ibb.co/yFr0P33/image.jpg'},{n:'Featured Product 03',p:999,img:'https://i.ibb.co/chKzbf73/image.jpg'}];const cart=[];const list=document.getElementById('list');products.forEach((x,i)=>list.innerHTML+=`<div class='card'><img src='${x.img}'><div class='info'><h3>${x.n}</h3><div class='price'>₹${x.p}</div><button class='add' onclick='add(${i})'>Add to Cart</button></div></div>`);function add(i){const f=cart.find(v=>v.n===products[i].n);if(f)f.q++;else cart.push({...products[i],q:1});render()}function render(){document.getElementById('count').textContent=cart.reduce((a,b)=>a+b.q,0);let html='',t=0;cart.forEach(c=>{t+=c.p*c.q;html+=`<p>${c.n} × ${c.q} = ₹${c.p*c.q}</p>`});document.getElementById('items').innerHTML=html||'Cart Empty';document.getElementById('total').textContent=t}function openCart(){document.getElementById('drawer').style.display='block'}function closeCart(){document.getElementById('drawer').style.display='none'}function emailOrder(){let body='Shoplyfire Order%0A';cart.forEach(c=>body+=`${c.n} x${c.q} = ₹${c.p*c.q}%0A`);body+=`%0AName: ${name.value}%0APhone: ${phone.value}%0AAddress: ${address.value}`;location.href=`mailto:sksarjatali0@gmail.com?subject=New Order&body=${body}`}function pay(){window.open('https://razorpay.me/@sksarjatali','_blank')}
+</script>
+</body>
+</html>
